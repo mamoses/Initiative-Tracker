@@ -43,8 +43,10 @@ public class InitiativeTracker {
 		
 		
 		JPanel table_panel = new JPanel();
-		table_panel.setBackground(Color.red);
+		table_panel.setBackground(Color.blue);
 		table_panel.setBounds(20,200,540,300);
+		
+		
 		
 		
 		
