@@ -6,6 +6,9 @@ public class InitiativeTracker {
 	
 	JFrame screen;
 	int x;
+	
+	 String data[][]={};    
+	 String column[]={"PLAYER","INITIATIVE"};
 	InitiativeTracker(){
 		x = 10;
 		screen = new JFrame("Initiative Tracker");
@@ -42,14 +45,10 @@ public class InitiativeTracker {
 		form_panel.add(add_button);
 		
 		
-		JPanel table_panel = new JPanel();
-		table_panel.setBackground(Color.green);
-		table_panel.setBounds(20,200,540,300);
-		
-		
-		
-		
-		
+		JTable init_table = new JTable(data,column);    
+		init_table.setBounds(30,40,200,300);          
+		JScrollPane table_panel = new JScrollPane(init_table);
+		table_panel.setBounds(20,200,540,300);       
 		
 		
 		
