@@ -1,10 +1,15 @@
 package initiative;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import TableModel.MyTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InitiativeTracker{
 	
@@ -12,29 +17,29 @@ public class InitiativeTracker{
 	JTextField player_name;
 	JTextField player_init;
 	JButton add_button;
+	JButton remove_button;
 	JTable init_table;
 	int x;
 	
-	String data[][] = new String[17][17];    
 	String column[]={"PLAYER","INITIATIVE"};
-	
-	DefaultTableModel model = new DefaultTableModel();
+	MyTableModel model = new MyTableModel();
 	Object[] table_row = new Object[2];
 	 
 	
 	InitiativeTracker(){
 		x = 10;
 		screen = new JFrame("Initiative Tracker");
+		screen.setSize(750,650);
+		screen.setLayout(new GridBagLayout());
 		
 		JLabel intro = new JLabel ("This is a demo of an initiative tracker for Dungeons and Dragons!");
-		intro.setBounds(110, 0, 500, 100);
 		
-		Toolkit t=Toolkit.getDefaultToolkit();
-		Image dice = t.getImage("images/dice.jpg");
+		
+		Toolkit tool = Toolkit.getDefaultToolkit();
+		Image dice = tool.getImage("images/dice.jpg");
 		screen.setIconImage(dice);
 		
 		JPanel form_panel = new JPanel();
-		form_panel.setBounds(20,90,540,100);
 		form_panel.setLayout(new GridBagLayout());
 		GridBagConstraints form_c = new GridBagConstraints();
 		
@@ -44,18 +49,17 @@ public class InitiativeTracker{
 		player_name = new JTextField();
 		JLabel init_label = new JLabel("Initiative:");
 		player_init = new JTextField();
+		
 		add_button = new JButton("Add Player");
 		add_button.setActionCommand("add");
-		
-		//Setting components sizes and locations
-		player_label.setBounds(10, 40, 100, 20);
-		player_name.setSize(100, 100);
-		player_name.setBounds(100, 40, 100, 25);
-		init_label.setBounds(220, 40, 100, 20);
-		player_init.setBounds(275, 40, 100, 25);
-		add_button.setBounds(400, 40, 100, 25);
 		add_button.addActionListener(new MyActionListener());
 		
+		remove_button = new JButton("Remove Player");
+		remove_button.setActionCommand("remove");
+		remove_button.addActionListener(new MyActionListener());
+		
+		
+		//Setting components sizes and locations
 		form_c.fill = GridBagConstraints.NONE;
 		form_c.gridx = 0;
 		form_c.ipadx = 0;
@@ -71,24 +75,31 @@ public class InitiativeTracker{
 		form_c.ipadx = 100;
 		form_panel.add(player_init, form_c);
 		form_c.gridx = 4;
-		form_c.ipadx = 0;
+		form_c.ipadx = 20;
 		form_panel.add(add_button, form_c);
+		form_c.gridx = 5;
+		form_c.ipadx = 0;
+		form_panel.add(remove_button, form_c);
 		
 		
-		init_table = new JTable();    
-		init_table.setBounds(30,40,200,295);
+		init_table = new JTable();
 		
 		model.setColumnIdentifiers(column);
 		init_table.setModel(model);
 		init_table.setBackground(Color.LIGHT_GRAY);
 		
+		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(init_table.getModel());
+		List<RowSorter.SortKey> sortKeys = new ArrayList<>(25);
+		sortKeys.add(new RowSorter.SortKey(1, SortOrder.DESCENDING));
+		sorter.setSortKeys(sortKeys);
+		init_table.setRowSorter(sorter);
+		
 		
 		JScrollPane table_panel = new JScrollPane(init_table);
-		table_panel.setBounds(20,200,540,295);
 		
 		
-		screen.setSize(650,650);
-		screen.setLayout(new GridBagLayout());
+		
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
 		c.weighty = 20.5;
@@ -109,7 +120,7 @@ public class InitiativeTracker{
 		c.gridx = 0;
 		c.gridy = 3;
 		screen.add(table_panel, c);
-		//screen.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+		
 		screen.setVisible(true);
 		
 	}
@@ -119,28 +130,50 @@ public class InitiativeTracker{
 	}
 	
 	
+	
+	private class MyActionListener implements ActionListener{
+	      public void actionPerformed(ActionEvent evt){
+	    	  if (evt.getSource() == add_button) {
+		           
+		           if(player_init.getText().isEmpty() || player_name.getText().isEmpty()) {
+		        	   System.out.println("WAIT");
+		           }
+		           
+		           else {
+			           table_row[0] = player_name.getText();
+			           
+			           try {
+			        	   table_row[1] = Integer.parseInt(player_init.getText());
+			           }
+			           catch(NumberFormatException ex) {
+			        	   System.out.println("ERROR2");
+			        	   return;
+			           }
+			          
+			           model.addRow(table_row);
+		           }
+		       }
+	    	  else if (evt.getSource() == remove_button) {
+	    		  int selected_row = init_table.getSelectedRow();
+	    		  
+	    		  if(selected_row >= 0) {
+	    			  model.removeRow(selected_row);
+	    		  }
+	    		  else {
+	    			  System.out.println("ERROR");
+	    		  }
+	    	  }
+	       }
+	}
 
+	
+	
 	public static void main(String[] args) {
 		
 		InitiativeTracker it = new InitiativeTracker();
 		
 		
 
-	}
-	
-	private class MyActionListener implements ActionListener{
-	      public void actionPerformed(ActionEvent evt){
-	    	  if (evt.getSource() == add_button) {
-		           System.out.println(player_name.getText());
-		           System.out.println(player_init.getText());
-		           
-		           table_row[0] = player_name.getText();
-		           table_row[1] = player_init.getText();
-		           
-		           model.addRow(table_row);
-		           
-		       }
-	       }
 	}
 
 
