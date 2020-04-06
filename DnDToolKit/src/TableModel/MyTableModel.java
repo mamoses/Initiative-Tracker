@@ -5,8 +5,10 @@ import javax.swing.table.DefaultTableModel;
 
 public class MyTableModel extends DefaultTableModel {
 	
+	Class[] types = {String.class, Integer.class };
+	
 	public MyTableModel(){
-		
+				
 		
 	}
 	@Override
@@ -14,4 +16,8 @@ public class MyTableModel extends DefaultTableModel {
 		return false;
 		
 	}
+	@Override
+	 public Class getColumnClass(int c) {
+		return this.types[c];
+	    }
 }

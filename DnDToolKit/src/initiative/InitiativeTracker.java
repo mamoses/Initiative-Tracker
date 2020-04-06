@@ -1,5 +1,6 @@
 package initiative;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -86,13 +87,17 @@ public class InitiativeTracker{
 		
 		model.setColumnIdentifiers(column);
 		init_table.setModel(model);
-		init_table.setBackground(Color.LIGHT_GRAY);
 		
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(init_table.getModel());
 		List<RowSorter.SortKey> sortKeys = new ArrayList<>(25);
 		sortKeys.add(new RowSorter.SortKey(1, SortOrder.DESCENDING));
+		sorter.setSortable(0, false);
 		sorter.setSortKeys(sortKeys);
 		init_table.setRowSorter(sorter);
+		
+		DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+		leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+		init_table.getColumnModel().getColumn(1).setCellRenderer(leftRenderer);
 		
 		
 		JScrollPane table_panel = new JScrollPane(init_table);
